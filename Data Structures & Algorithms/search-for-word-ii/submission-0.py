@@ -29,8 +29,8 @@ class Solution:
         Dacă reușim să potrivim toate caracterele unui cuvânt în ordine, acel
         cuvânt este găsit și adăugat la rezultat.
 
-        w - num(words) m - rows, n - cols, t - max(len(word))
-        T = O(w * m * n * 4 * 3^t - 1), S = O(t)
+        w - num(words), m - rows, n - cols, t - max(len(word))
+        T = O(w * m * n * 4 * 3^(t - 1)), S = O(t)
         """        
         # rows, cols = len(board), len(board[0])
         # res = []
@@ -70,28 +70,35 @@ class Solution:
 
         """Backtracking + Trie
 
-În continuare efectuăm DFS pe graf, dar ghidăm DFS-ul folosind un arbore Trie, astfel încât să parcurgem doar căile care corespund prefixelor cuvintelor date.
+        În continuare efectuăm DFS pe graf, dar ghidăm DFS-ul folosind un
+        arbore Trie, astfel încât să parcurgem doar căile care corespund
+        prefixelor cuvintelor date.
 
-Această versiune este mai rapidă deoarece introduce o tăiere agresivă:
+        Această versiune este mai rapidă deoarece introduce o tăiere agresivă:
+        -Fiecare nod al arborelui Trie păstrează refs = „câte cuvinte din
+        dicționar mai trec prin acest nod”.
+        -Când găsim un cuvânt, îl marcăm ca găsit (idx = -1) și decrementăm
+        imediat refs pentru nodul respectiv.
+        -Dacă refs devine 0, înseamnă că nu mai există niciun cuvânt activ în
+        acea ramură, așa că tăiem imediat pointerul de la părinte
+        (prev.children[...] = None) și oprim explorarea acelei ramuri.
+        -Astfel, apelurile DFS viitoare nu mai explorează prefixe care nu pot
+        produce cuvinte noi.
 
-Fiecare nod al arborelui Trie păstrează refs = „câte cuvinte din dicționar mai trec prin acest nod”.
-Când găsim cu succes unul sau mai multe cuvinte, fiecare apel DFS returnează numărul de cuvinte noi pe care le-a găsit sub prefixul său curent.
-Scădem acest număr din refs pe măsură ce DFS se derulează, eliminând cuvintele găsite din fiecare nod Trie de pe căile lor.
-Dacă, după eliminare, valoarea refs a unui nod devine 0, acea ramură este moartă (niciun cuvânt rămas nu o mai folosește), așa că tăiem fizic pointerul de la părintele său (prev.children[...] = null).
-Acest lucru împiedică apelurile DFS viitoare să exploreze prefixe inutile.
-De asemenea, în loc să folosim un set de vizite, marcăm tabla pe loc:
+        De asemenea, în loc să folosim un set de vizite, marcăm tabla pe loc:
+        -Setăm temporar board[r][c] = '*' în timp ce explorăm acea cale.
+        -Îl restabilim la revenire.
 
-Setăm temporar board[r][c] = «*» în timp ce explorăm acea cale.
-Îl restabilim la revenire.
-Ce stochează Trie-ul
-Fiecare nod are:
+        Ce stochează Trie-ul
+        Fiecare nod are:
+        -children[26]: literele următoare (array, mai rapidă decât o hartă hash)
+        -idx: indexul unui cuvânt în lista de cuvinte dacă un cuvânt se termină
+        aici, altfel -1
+        -refs: numărul de cuvinte „încă active” care trec prin acest nod
+        (inclusiv cuvintele finale)
 
-children[26]: literele următoare (matrice, mai rapidă decât o hartă hash)
-idx: indexul unui cuvânt în lista de cuvinte dacă un cuvânt se termină aici, altfel -1
-refs: numărul de cuvinte „încă active” care trec prin acest nod (inclusiv cuvintele finale)
-
-
-        T = O(), S = O()
+        m - rows, n - cols, t - max(len(word)), s = sum(len(words))
+        T = O(m * n * 4 * 3^(t - 1) + s), S = O(s)
         """
         root = TrieNode()
         for i in range(len(words)):
