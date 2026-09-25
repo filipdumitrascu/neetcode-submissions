@@ -131,8 +131,8 @@ class Solution:
 
         Pentru o regină plasată în poziția (rând, coloană):
         -Masca coloanei → bitul coloanei
-        -Diagonala pozitivă (/) → bitul (rând + coloană)
-        -Diagonala negativă (\) → bitul (rând - coloană + n)
+        -Diagonala pozitivă → bitul (rând + coloană)
+        -Diagonala negativă → bitul (rând - coloană + n)
         -Dacă oricare dintre acești biți este deja setat, plasarea unei regine
         în acel loc provoacă un conflict.
 
