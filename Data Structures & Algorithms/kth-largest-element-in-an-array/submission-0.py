@@ -6,7 +6,7 @@ class Solution:
     def findKthLargest(self, nums: list[int], k: int) -> int:
         """Sorting
 
-        Dacă sortezi întregul tablou, toate elementele vor fi aranjate de la
+        Dacă sortezi întregul array, toate elementele vor fi aranjate de la
         cel mai mic la cel mai mare.
         Odată sortat:
         - Cel mai mare element se află pe ultima poziție.
@@ -28,21 +28,21 @@ class Solution:
 
         """Min Heap
 
-        În loc să sortăm întregul tablou, trebuie doar să ținem evidența celor
+        În loc să sortăm întregul array, trebuie doar să ținem evidența celor
         k elemente cele mai mari întâlnite până în acel moment.
 
         Un min-heap este perfect pentru acest scop:
-        -Un min-heap păstrează întotdeauna elementul cel mai mic în vârf.
-        -Dacă menținem un heap de dimensiunea k, atunci:
-         heap-ul va conține întotdeauna cele k elemente cele mai mari întâlnite
-          până în acel moment.
-         rădăcina heap-ului (cel mai mic dintre acești k) va fi al k-lea element
-          ca mărime.
+        - Un min-heap păstrează întotdeauna elementul cel mai mic în vârf.
+        - Dacă menținem un heap de dimensiunea k, atunci:
+            - heap-ul va conține întotdeauna cele k elemente cele mai mari întâlnite
+            până în acel moment.
+            - rădăcina heap-ului (cel mai mic dintre acești k) va fi al k-lea element
+            ca mărime.
 
         Proces:
-        -Adăugăm elemente în heap.
-        -Dacă heap-ul depășește mărimea k, eliminăm elementul cel mai mic.
-        -La final, rădăcina heap-ului este exact al k-lea element ca mărime.
+        - Adăugăm elemente în heap.
+        - Dacă heap-ul depășește mărimea k, eliminăm elementul cel mai mic.
+        - La final, rădăcina heap-ului este exact al k-lea element ca mărime.
 
         Astfel se evită sortarea întregului tablou și se menține un consum
         redus de memorie.
@@ -68,47 +68,47 @@ class Solution:
         QuickSort, dar explorează doar partea din array care conține răspunsul.
 
         Ideea principală:
-        -Alege un pivot.
-        -Reorganizează elementele astfel încât:
-         toate numerele mai mici sau egale cu pivotul să fie mutate în stânga,
-         toate numerele mai mari să fie mutate în dreapta.
-        -După partiționare, pivotul ajunge în poziția corectă, sortată.
-        -În loc să sortăm întregul arrau, verificăm:
-         Dacă poziția finală a pivotului este indexul dorit → răspunsul a fost
-          găsit.
-         În caz contrar, aplicăm recursivitatea doar în partea în care se află
-          indexul țintă.
+        - Alege un pivot.
+        - Reorganizează elementele astfel încât:
+            - toate numerele mai mici sau egale cu pivotul să fie mutate în stânga,
+            - toate numerele mai mari să fie mutate în dreapta.
+        - După partiționare, pivotul ajunge în poziția corectă, sortată.
+        - În loc să sortăm întregul array, verificăm:
+            - Dacă poziția finală a pivotului este indexul dorit → răspunsul a fost
+            găsit.
+            - În caz contrar, aplicăm recursivitatea doar în partea în care se află
+            indexul țintă.
 
         Deoarece eliminăm jumătate din array de fiecare dată, această abordare
         este, în medie, mult mai rapidă decât sortarea completă.
 
         Pentru al k-lea cel mai mare:
-        -Convertiți-l în indexul corespunzător în ordinea sortată:
-         index = n - k
+        - Convertiți-l în indexul corespunzător în ordinea sortată:
+        index = n - k
 
-        Apoi utilizați Quick Select pentru a găsi valoarea care ar apărea
-        la acel index.
+        Apoi utilizați Quick Select pentru a găsi valoarea care ar apărea la acel index.
 
         T = O(n), S = O(n)
         """
-        def helper(nums: list[int], k: int):
+        def quick_select(nums: list[int], k: int):
             pivot = random.choice(nums)
-            left, mid, right = [], [], []
+
+            greater = []
+            equal = []
+            smaller = []
 
             for num in nums:
                 if num > pivot:
-                    left.append(num)
+                    greater.append(num)
                 elif num < pivot:
-                    right.append(num)
+                    smaller.append(num)
                 else:
-                    mid.append(num)
+                    equal.append(num)
 
-            if k <= len(left):
-                return helper(left, k)
-
-            if len(left) + len(mid) < k:
-                return helper(right, k - len(left) - len(mid))
-
+            if k <= len(greater):
+                return quick_select(greater, k)
+            if len(greater) + len(equal) < k:
+                return quick_select(smaller, k - len(greater) - len(equal))
             return pivot
 
-        return helper(nums, k)
+        return quick_select(nums, k)
