@@ -5,16 +5,17 @@ class Solution:
     def lastStoneWeight(self, stones: list[int]) -> int:
         """Sorting
 
-        Trebuie să ciocnești întotdeauna cele două pietre cele mai grele una de alta.
-        O modalitate simplă de a te asigura că faci acest lucru este:
+        Trebuie să ciocnim întotdeauna cele două pietre cele mai grele una de alta.
+        O modalitate simplă de a ne asigura că facem acest lucru este:
 
-        -Sortam lista de pietre astfel încât cele mai grele să se afle la sfârșit.
-        -Elimină ultimele două pietre (cele cu cele mai mari valori).
-        -Ciocnește-le:
+        - Sortam lista de pietre astfel încât cele mai grele să se afle la sfârșit.
+        - Eliminăm ultimele două pietre (cele cu cele mai mari valori).
+        - La ciocnire:
           Dacă sunt egale → ambele dispar.
           Dacă sunt diferite → diferența devine o nouă piatră.
-        -Inserează noua piatră (dacă există) înapoi în listă.
-        -Repetă până când rămâne cel mult o singură piatră.
+        - Inseram noua piatră (dacă există) înapoi în listă.
+        
+        Se repeta pasii anteriori până când rămâne cel mult o singură piatră.
 
         Sortarea de fiecare dată nu este cea mai eficientă abordare, dar este
         simplă și ușor de implementat.
@@ -37,10 +38,11 @@ class Solution:
         Întotdeauna spargem cele două pietre cele mai grele.
         Dacă păstrăm pietrele în ordine, cele două pietre cele mai grele se
         află la capătul arrayului, așa că le putem selecta cu ușurință.
+
         După spargere:
-        -Îndepărtăm cele două pietre cele mai grele.
-        -Dacă sunt diferite, diferența dintre ele devine o nouă piatră.
-        -Pentru a menține lista sortată, trebuie să inserăm această nouă piatră
+        - Îndepărtăm cele două pietre cele mai grele.
+        - Dacă sunt diferite, diferența dintre ele devine o nouă piatră.
+        - Pentru a menține lista sortată, trebuie să inserăm această nouă piatră
         în poziția corectă.
 
         În loc să scanăm liniar pentru a găsi poziția, folosim căutarea binară
@@ -56,21 +58,28 @@ class Solution:
         # while n > 1:
         #     curr = stones.pop() - stones.pop()
         #     n -= 2
-        #     if curr > 0:
-        #         left = 0
-        #         right = n - 1
-        #         while left <= right:
-        #             mid = left + (right - left) // 2
-        #             if stones[mid] < curr:
-        #                 left = mid + 1
-        #             else:
-        #                 right = mid - 1
-        #         pos = l
-        #         n += 1
-        #         stones.append(0)
-        #         for i in range(n - 1, pos, -1):
-        #             stones[i] = stones[i - 1]
-        #         stones[pos] = curr
+
+        #     if curr == 0:
+        #         continue
+
+        #     # search where to insert curr
+        #     left = 0
+        #     right = n
+        #     while left < right:
+        #         mid = left + (right - left) // 2
+        #         if stones[mid] < curr:
+        #             left = mid + 1
+        #         else:
+        #             right = mid
+
+        #     pos = left
+        #     n += 1
+
+        #     # shift the elements to the right by one position
+        #     stones.append(0)
+        #     for i in range(n - 1, pos, -1):
+        #         stones[i] = stones[i - 1]
+        #     stones[pos] = curr
 
         # return stones[0] if n > 0 else 0
 
@@ -82,34 +91,34 @@ class Solution:
         Un max-heap este perfect pentru acest scop, deoarece ne permite să
         extragem eficient valorile cele mai mari.
 
-        Majoritatea limbajelor de programare oferă min-heap-uri, așa că o
-        strategie obișnuită este aceea de a stoca valori negative.
+        Majoritatea limbajelor de programare, inclusiv Python, oferă doar min-heap-uri,
+        așa că o strategie obișnuită este aceea de a stoca valori negative.
         Astfel, valoarea cea mai mică (cea mai negativă) reprezintă piatra
         cea mai mare.
 
         Proces:
-        -Convertește toate pietrele în valori negative și construiește un heap.
-        -Extrage în mod repetat cele două pietre cele mai mici (adică cele mai grele).
-        -Distruge-le:
-          Dacă sunt egale → ambele sunt distruse.
-          Dacă sunt diferite → introduce valoarea negativă a diferenței dintre
+        - Convertim toate pietrele în valori negative și construim un heap.
+        - Extragem în mod repetat cele două pietre cele mai mici (adică cele mai grele).
+        - Le distrugem:
+          - Dacă sunt egale → ambele sunt distruse.
+          - Dacă sunt diferite → introducem valoarea negativă a diferenței dintre
           ele înapoi în heap.
-        -Când rămâne o singură piatră sau niciuna, returnează greutatea rămasă
+        - Când rămâne o singură piatră sau niciuna, returnează greutatea rămasă
         sau 0.
 
         T = O(n log n), S = O(n)
         """
-        # stones_heap = [-s for s in stones]
+        stones_heap = [-s for s in stones]
+        heapq.heapify(stones_heap)
 
-        # heapq.heapify(stones_heap)
-        # while len(stones_heap) > 1:
-        #     first_stone = heapq.heappop(stones_heap)
-        #     second_stone = heapq.heappop(stones_heap)
+        while len(stones_heap) > 1:
+            first_stone = heapq.heappop(stones_heap)
+            second_stone = heapq.heappop(stones_heap)
 
-        #     if second_stone > first_stone:
-        #         heapq.heappush(stones_heap, first_stone - second_stone)
+            if second_stone != first_stone:
+                heapq.heappush(stones_heap, first_stone - second_stone)
 
-        # return abs(stones_heap[0]) if stones_heap else 0
+        return abs(stones_heap[0]) if stones_heap else 0
 
 
 
@@ -123,13 +132,13 @@ class Solution:
         pietre existente pentru fiecare greutate posibilă.
 
         Idei cheie:
-        -Să presupunem că bucket[w] stochează numărul de pietre cu greutatea w
+        - Să presupunem că bucket[w] stochează numărul de pietre cu greutatea w
         pe care le avem.
-        -Căutăm în mod repetat cea mai grea piatră disponibilă.
-        -Când spargem pietrele cu greutățile a și b:
-          Dacă a == b, acestea se anulează reciproc.
-          Dacă sunt diferite, piatra rămasă a - b este adăugată înapoi în bucket.
-        -Continuăm până când rămâne o singură greutate diferită de zero.
+        - Căutăm în mod repetat cea mai grea piatră disponibilă.
+        - Când spargem pietrele cu greutățile a și b:
+          - Dacă a == b, acestea se anulează reciproc.
+          - Dacă sunt diferite, piatra rămasă a - b este adăugată înapoi în bucket.
+        - Continuăm până când rămâne o singură greutate diferită de zero.
 
         Acest lucru funcționează deoarece operațiunile cu bucket-ul
         (incrementare, decrementare, scanare) sunt eficiente atunci când
@@ -138,30 +147,35 @@ class Solution:
         n - len(stones),  w - max(stones)
         T = O(n + w), S = O(w)
         """
-        max_stone = max(stones)
-        bucket = [0] * (max_stone + 1)
-        for stone in stones:
-            bucket[stone] += 1
+        # max_stone = max(stones)
+        # bucket = [0] * (max_stone + 1)
+        # for stone in stones:
+        #     bucket[stone] += 1
 
-        first = max_stone
-        second = max_stone
-        while first > 0:
-            if bucket[first] % 2 == 0:
-                first -= 1
-                continue
+        # first = max_stone
+        # second = max_stone
+        # while first > 0:
+        #     # If the count at this weight is even, all stones cancel in pairs.
+        #     # move the pointer to the next heaviest stone
+        #     if bucket[first] % 2 == 0:
+        #         first -= 1
+        #         continue
 
-            j = min(first - 1, second)
-            while j > 0 and bucket[j] == 0:
-                j -= 1
+        #     # If odd, one stone remains; find the next heaviest stone to smash with it.
+        #     j = min(first - 1, second)
+        #     while j > 0 and bucket[j] == 0:
+        #         j -= 1
 
-            if j == 0:
-                return first
+        #     if j == 0:
+        #         return first
 
-            second = j
-            bucket[first] -= 1
-            bucket[second] -= 1
+        #     # Compute the difference and update the bucket.
+        #     second = j
+        #     bucket[first] -= 1
+        #     bucket[second] -= 1
+        #     bucket[first - second] += 1
 
-            bucket[first - second] += 1
-            first = max(first - second, second)
+        #     # Move the pointer to the next heaviest relevant weight.
+        #     first = max(first - second, second)
 
-        return first
+        # return first
