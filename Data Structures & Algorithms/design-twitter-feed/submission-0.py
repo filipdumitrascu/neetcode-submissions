@@ -9,37 +9,37 @@ class Twitter:
     urmăriți, ceea ce este suficient de rapid, dar poate fi îmbunătățită.
 
     Observație cheie:
-    -Fiecare utilizator este interesat doar de cele mai recente 10 tweet-uri,
+    - Fiecare utilizator este interesat doar de cele mai recente 10 tweet-uri,
     deoarece fluxul de știri afișează cel mult 10 elemente.
-    -Așadar, pentru fiecare utilizator, în loc să stocăm toate tweet-urile,
+    - Așadar, pentru fiecare utilizator, în loc să stocăm toate tweet-urile,
     să stocăm doar cele mai recente 10 tweet-uri ale acestuia.
-    -Astfel se reduc:
-     Utilizarea memoriei
-     Operațiunile asupra heap-ului
-     Timpul necesar pentru fiecare interogare
+    - Astfel se reduc:
+        - Utilizarea memoriei
+        - Operațiunile asupra heap-ului
+        - Timpul necesar pentru fiecare interogare
 
     Trucul:
-    -Când un utilizator publică un tweet, adaugă-i un timestamp (număr) în
+    - Când un utilizator publică un tweet, adaugă-i un timestamp (număr) în
     ordine descrescătoare și păstrează doar ultimele 10 tweet-uri.
-    -La preluarea fluxului de știri:
-     Dacă utilizatorul urmărește multe persoane (>= 10), păstrează doar cei 10
-     utilizatori urmăriți cu cel mai recent tweet, folosind un max-heap de
-     dimensiune 10.
-     -Această abordare este sigură: dacă cel mai recent tweet al unei persoane
-    urmărite este deja prea vechi, niciunul dintre tweet-urile sale mai vechi
-    nu poate intra în lista finală de 10.
-     -În caz contrar, introduceți cel mai recent tweet de la fiecare persoană
-    urmărită într-un min-heap și continuați să extindeți lista cu același
-    utilizator după fiecare extragere.
-    -În ambele cazuri, nu procesăm niciodată mai mult de 10 tweet-uri per
-    persoană urmărită și nu extragem niciodată mai mult de 10 rezultate.
+    - La preluarea fluxului de știri:
+        - Dacă utilizatorul urmărește multe persoane (>= 10), păstrează doar cei 10
+        utilizatori urmăriți cu cel mai recent tweet, folosind un max-heap de
+        dimensiune 10.
+        - Această abordare este sigură: dacă cel mai recent tweet al unei persoane
+        urmărite este deja prea vechi, niciunul dintre tweet-urile sale mai vechi
+        nu poate intra în lista finală de 10.
+        - În caz contrar, introduceți cel mai recent tweet de la fiecare persoană
+        urmărită într-un min-heap și continuați să extindeți lista cu același
+        utilizator după fiecare extragere.
+        - În ambele cazuri, nu procesăm niciodată mai mult de 10 tweet-uri per
+        persoană urmărită și nu extragem niciodată mai mult de 10 rezultate.
 
     Acest lucru face ca metoda să fie foarte rapidă chiar și atunci când
     utilizatorii postează multe tweet-uri.
 
     __init__:     T = O(1), S = O(1)
     postTweet:    T = O(1), S = O(1)
-    getNewsFeed:  T = O(f log f), S = O(f)
+    getNewsFeed:  T = O(n), S = O(f)
     follow:       T = O(1), S = O(1)
     unfollow:     T = O(1), S = O(1)
     """
@@ -68,7 +68,6 @@ class Twitter:
                 last_tweet_posted = len(self.tweet_map[followee_id]) - 1
                 time, tweet_id = self.tweet_map[followee_id][last_tweet_posted]
 
-                # takes every last tweet posted from every followee (leetcode 23)
                 min_heap.append([time, tweet_id, followee_id, last_tweet_posted - 1])
 
         heapq.heapify(min_heap)
