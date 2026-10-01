@@ -4,16 +4,16 @@ class Solution:
 
         Abordarea de tip „brute-force” încearcă fiecare submulțime posibilă a
         numerelor candidate. 
-        -Sortăm arrayul astfel încât combinațiile duplicate să apară în aceeași
+        - Sortăm arrayul astfel încât combinațiile duplicate să apară în aceeași
         ordine.
-        -La fiecare indice, avem două opțiuni:
-            -Să includem numărul curent.
-            -Să omitem numărul curent.
-        -Astfel se generează toate submulțimile (asemănător unui arbore binar
+        - La fiecare indice, avem două opțiuni:
+            - Să includem numărul curent.
+            - Să omitem numărul curent.
+        - Astfel se generează toate submulțimile (asemănător unui arbore binar
         de opțiuni).
-        -De fiecare dată când suma unui subset este egală cu valoarea țintă,
+        - De fiecare dată când suma unui subset este egală cu valoarea țintă,
         îl stocăm.
-        -Pentru a evita combinațiile duplicate, stocăm fiecare rezultat sub
+        - Pentru a evita combinațiile duplicate, stocăm fiecare rezultat sub
         forma unui tuple într-un set.
 
         Această metodă este ușor de înțeles, dar lentă, deoarece explorează
@@ -28,13 +28,14 @@ class Solution:
         #     if total == target:
         #         res.add(tuple(cur))
         #         return
+
         #     if total > target or i == len(candidates):
         #         return
 
         #     cur.append(candidates[i])
         #     generate_subsets(i + 1, cur, total + candidates[i])
-        #     cur.pop()
 
+        #     cur.pop()
         #     generate_subsets(i + 1, cur, total)
 
         # generate_subsets(0, [], 0)
@@ -48,15 +49,15 @@ class Solution:
         țintă, dar fiecare număr poate fi folosit o singură dată, iar lista
         poate conține duplicate.
         Pentru a evita generarea de combinații duplicate, procedăm astfel:
-        -Sortăm matricea astfel încât duplicatele să apară unul lângă altul.
-        -Folosim metoda backtracking pentru a explora opțiunile:
-            -Luăm numărul curent.
-            -Sărim peste numărul curent.
-        -Când sărim, omitem toate duplicatele dintr-o singură mișcare pentru a
+        - Sortăm arrayul astfel încât duplicatele să apară unul lângă altul.
+        - Folosim metoda backtracking pentru a explora opțiunile:
+            - Luăm numărul curent.
+            - Sărim peste numărul curent.
+        - Când sărim, omitem toate duplicatele dintr-o singură mișcare pentru a
         evita crearea de combinații duplicate precum [1,2,2] de mai multe ori.
-        -Dacă suma parțială depășește valoarea țintă, încetăm explorarea căii
+        - Dacă suma parțială depășește valoarea țintă, încetăm explorarea căii
         curente înainte de timp.
-        
+
         Sortarea + omiterea duplicatelor + backtrackingul ne asigură că
         construim doar combinații valide și unice.
 
@@ -66,7 +67,6 @@ class Solution:
         # # this way a loop can skip adjacent values in order not
         # # to create duplicate combinations
         # candidates.sort()
-
 
         # def bkt(i, cur, total):
         #     # same cases as problem i
@@ -79,8 +79,8 @@ class Solution:
 
         #     cur.append(candidates[i])
         #     bkt(i + 1, cur, total + candidates[i])  # left branch, include candidate
-        #     cur.pop()
 
+        #     cur.pop()
         #     while i + 1 < len(candidates) and candidates[i] == candidates[i + 1]:
         #         i += 1
         #     bkt(i + 1, cur, total)  # right branch, include no occurence of candidate
@@ -90,23 +90,22 @@ class Solution:
 
 
 
-        """Backtracking Optimal
+        """Backtracking Optimal (pruning)
 
         Avem nevoie de toate combinațiile unice în care fiecare număr poate
         fi folosit cel mult o singură dată, iar numerele duplicate din datele
         de intrare nu trebuie să genereze combinații duplicate.
 
         Pentru a gestiona în siguranță numerele duplicate, procedăm astfel:
-        -Sortăm tabloul
-        Astfel, numerele egale sunt grupate împreună, ceea ce ne ajută să
-        omitem cu ușurință duplicatele.
-        -Folosim metoda backtracking, în care, la fiecare indice, decidem:
-            -Să luăm numărul
-            -Să omitem numărul
-        -Pentru a evita combinațiile duplicate:
-            -Dacă candidates[i] == candidates[i - 1] și ne aflăm încă la
-            același nivel de recursivitate (i > idx), sărim peste acel număr.
-        -Ne oprim mai devreme dacă current_sum + candidates[i] > target,
+        - Sortăm tabloul. Astfel, numerele egale sunt grupate împreună, ceea ce
+        ne ajută să omitem cu ușurință duplicatele (si pentru pruning).
+        - Folosim metoda backtracking, în care, la fiecare indice, decidem:
+            - Să luăm numărul
+            - Să omitem numărul
+        - Pentru a evita combinațiile duplicate:
+            - Dacă candidates[j] == candidates[j - 1] și ne aflăm încă la
+            același nivel de recursivitate (j > i), sărim peste acel număr.
+        - Ne oprim mai devreme dacă current_sum + candidates[i] > target,
         deoarece lista este sortată.
 
         Această abordare explorează fiecare număr o singură dată pe fiecare
@@ -117,19 +116,23 @@ class Solution:
         res = []
         candidates.sort()
 
-        def dfs(idx, path, cur):
-            if cur == target:
-                res.append(path.copy())
+        def bkt(i: int, cur: list[int], total: int) -> None:
+            if total == target:
+                res.append(cur.copy())
                 return
-            for i in range(idx, len(candidates)):
-                if i > idx and candidates[i] == candidates[i - 1]:
+
+            for j in range(i, len(candidates)):
+                # acelasi nivel de recursivitate i, j e alt
+                # element egal cu cel precedent
+                if j > i and candidates[j] == candidates[j - 1]:
                     continue
-                if cur + candidates[i] > target:
+
+                if total + candidates[j] > target:
                     break
 
-                path.append(candidates[i])
-                dfs(i + 1, path, cur + candidates[i])
-                path.pop()
+                cur.append(candidates[j])
+                bkt(j + 1, cur, total + candidates[j])
+                cur.pop()
 
-        dfs(0, [], 0)
+        bkt(0, [], 0)
         return res
