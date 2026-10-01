@@ -20,9 +20,9 @@ class Solution:
         res = []
         subset = []
 
-        def bkt(i):
+        def bkt(i):  # O(2^n)
             if i >= len(nums):
-                res.append(subset.copy())
+                res.append(subset.copy())  # O(n)
                 return
 
             # decision to include nums[i]
@@ -35,3 +35,13 @@ class Solution:
 
         bkt(0)
         return res
+
+
+"""
+    1. copy - shallow copy, copiaza doar lista exterioara si referinte catre
+elemente. In problema asta merge referinta la int, int e imutabil
+
+    2. from copy import deepcopy
+x = deepcopy(subset)    # copiaza recursiv tot
+daca aveam liste de liste era util, lista de ceva mutabil
+"""
