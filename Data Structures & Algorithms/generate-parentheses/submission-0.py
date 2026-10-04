@@ -5,18 +5,18 @@ class Solution:
         Generează toate șirurile de lungime 2n folosind doar „(” și „)”.
         Cele mai multe vor fi nevalide, așa că pentru fiecare șir complet îl validăm:
 
-        -Ține evidența unui sold (numărul de paranteze deschise).
-        -„(” mărește soldul, „)” îl micșorează.
-        -Dacă soldul devine vreodată negativ, înseamnă că există prea multe
+        - Ține evidența unui sold (numărul de paranteze deschise).
+        - „(” mărește soldul, „)” îl micșorează.
+        - Dacă soldul devine vreodată negativ, înseamnă că există prea multe
         paranteze „)” apărute prea devreme, ceea ce este nevalid.
-        -La final, soldul trebuie să fie 0, ceea ce înseamnă că toate
+        - La final, soldul trebuie să fie 0, ceea ce înseamnă că toate
         parantezele deschise sunt închise.
 
         T = O(2^(2n) * n), S = O(2^(2n) * n)
         """
         # res = []
 
-        # def valid(s: str):
+        # def valid(s: str) -> bool:
         #     open = 0
         #     for c in s:
         #         open += 1 if c == '(' else -1
@@ -24,7 +24,7 @@ class Solution:
         #             return False
         #     return not open
 
-        # def dfs(s: str):
+        # def dfs(s: str) -> None:
         #     if n * 2 == len(s):
         #         if valid(s):
         #             res.append(s)
@@ -44,13 +44,13 @@ class Solution:
         acestora, construim doar șiruri valide.
 
         Reguli cheie pentru paranteze valide:
-        -Poți adăuga „(” doar dacă mai ai paranteze deschise disponibile
+        - Poți adăuga „(” doar dacă mai ai paranteze deschise disponibile
         (open < n).
-        -Poți adăuga „)” doar dacă acest lucru nu afectează validitatea
+        - Poți adăuga „)” doar dacă acest lucru nu afectează validitatea
         (close < open).
-        -Un șir este complet și valid numai când open == close == n.
+        - Un șir este complet și valid numai când open == close == n.
 
-        Așadar, la fiecare pas, facem numai alegeri sigure, ceea ce evită din\
+        Așadar, la fiecare pas, facem numai alegeri sigure, ceea ce evită din
         timp căile nevalide.
 
         T = O(4^n / sqrt(n)), S = O(n)
