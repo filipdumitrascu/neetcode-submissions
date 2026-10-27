@@ -1,47 +1,8 @@
 class Solution:
-    def subsets(self, nums: list[int]) -> list[list[int]]:
-        """Backtracking
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        res = [[]]
 
-        Ideea este de a construi toate submulțimile posibile, făcând o alegere
-        la fiecare pas: pentru fiecare număr, avem două opțiuni — să-l includem
-        sau să-l excludem.
-        Astfel se formează în mod natural un arbore de decizie.
+        for num in nums:
+            res += [subset + [num] for subset in res]
 
-        Metoda backtracking ne ajută să explorăm ambele opțiuni:
-        -Adăugăm numărul curent → continuăm explorarea
-        -Îl eliminăm (anulăm) → explorăm fără el
-
-        De fiecare dată când ajungem la capătul arrayului, lista curentă
-        reprezintă un subset complet, așa că îl stocăm.
-        Astfel se generează sistematic toate cele 2ⁿ subseturi.
-
-        T = O(n * 2^n), S = O(n)
-        """
-        res = []
-        subset = []
-
-        def bkt(i):  # O(2^n)
-            if i >= len(nums):
-                res.append(subset.copy())  # O(n)
-                return
-
-            # decision to include nums[i]
-            subset.append(nums[i])
-            bkt(i + 1)
-
-            # decision not to include nums[i]
-            subset.pop()
-            bkt(i + 1)
-
-        bkt(0)
         return res
-
-
-"""
-    1. copy - shallow copy, copiaza doar lista exterioara si referinte catre
-elemente. In problema asta merge referinta la int, int e imutabil
-
-    2. from copy import deepcopy
-x = deepcopy(subset)    # copiaza recursiv tot
-daca aveam liste de liste era util, lista de ceva mutabil
-"""
