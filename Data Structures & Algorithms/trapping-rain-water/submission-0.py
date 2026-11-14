@@ -7,9 +7,9 @@ class Solution:
         doua valori, apa la indexul i se caculeaza prin minimul dintre ele - 
         inaltimea barii de pe pozitia curenta.
 
-        Practic, problema se reduce la a calcula maximul din stanga si minimul
-        din dreapta pentru fiecare pozitie. Brute force o facem pentru fiecare
-        inaltime. Ineficient dar obtinem rezultatul corect.
+        Practic, problema se reduce la a calcula maximul din stanga si din dreapta
+        pentru fiecare pozitie. Brute force calculam pentru fiecare inaltime.
+        Ineficient dar obtinem rezultatul corect.
 
         T = O(n^2), S = O(1)
         """
